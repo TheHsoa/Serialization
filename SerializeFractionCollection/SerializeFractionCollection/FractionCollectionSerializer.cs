@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -6,25 +7,38 @@ namespace SerializeFractionCollection
 {
     internal class FractionCollectionSerializer
     {
-        private readonly FileStream _fileStream;
+        private readonly BinaryFormatter _binaryFormatter = new BinaryFormatter();
 
-        public FractionCollectionSerializer(string fileName)
+        internal void SerializeFractionCollectionAndSaveToFile(List<Fraction> fractionList, string outFileName)
         {
-            _fileStream = File.Open(fileName, FileMode.Create);
+            try
+            {
+                using (var fileStream = File.Create(outFileName))
+                {
+                    _binaryFormatter.Serialize(fileStream, fractionList);
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine($"Something went wrong:\n{e}");
+            }
         }
 
-        internal void SerializeFractionCollection(List<Fraction> fractionListToSerialize)
+        internal List<Fraction> DeserializeFractionCollectionFromFile(string inFileName)
         {
-            var binaryFormatter = new BinaryFormatter();
-            binaryFormatter.Serialize(_fileStream, fractionListToSerialize);
-            _fileStream.Close();
-        }
+            var fractionListToSerialize = new List<Fraction>();
+            try
+            {
+                using (var fileStream = File.OpenRead(inFileName))
 
-        internal List<Fraction> DeserializeFractionCollection()
-        {
-            var binaryFormatter = new BinaryFormatter();
-            var fractionListToSerialize = (List<Fraction>)binaryFormatter.Deserialize(_fileStream);
-            _fileStream.Close();
+                {
+                    fractionListToSerialize = (List<Fraction>)_binaryFormatter.Deserialize(fileStream);
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine($"Something went wrong:\n{e}");
+            }
 
             return fractionListToSerialize;
         }
