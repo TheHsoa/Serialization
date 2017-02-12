@@ -21,36 +21,31 @@ namespace SerializeFractionCollection
             return string.Join("/", Numerator, Denominator);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object otherObject)
         {
-            if (obj == null)
+            if (otherObject == null)
             {
                 return false;
             }
 
-            var runtimeType = GetType();
-            var left = obj.GetType();
-
-            if (left != runtimeType)
+            if (ReferenceEquals(this, otherObject))
             {
-                return false;
+                return true;
             }
 
-            var fraction = (Fraction) obj;
-
-            return Equals(fraction);
+            return otherObject.GetType() == GetType() && Equals(otherObject as Fraction);
         }
 
-        protected bool Equals(Fraction other)
+        protected bool Equals(Fraction otherFraction)
         {
-            return Numerator == other.Numerator && Denominator == other.Denominator;
+            return Numerator == otherFraction.Numerator && Denominator == otherFraction.Denominator;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (Numerator.GetHashCode()*397) ^ Denominator.GetHashCode();
+                return (Numerator.GetHashCode() * 397) ^ Denominator.GetHashCode();
             }
         }
     }

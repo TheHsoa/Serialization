@@ -17,8 +17,10 @@ namespace SerializeFractionCollection
                 fractionList.Add(new Fraction(random.Next(1, 10), random.Next(1, 100)));
             }
 
-            fractionList.SerializeFractionCollection("outfile");
-            var deserializedFractionList = FractionCollectionSerializeExtension.DeserializeFractionCollection("outfile");
+            var serializer = new FractionCollectionSerializer("outfile");
+
+            serializer.SerializeFractionCollection(fractionList);
+            var deserializedFractionList = serializer.DeserializeFractionCollection();
 
             Console.WriteLine(string.Join(" ", fractionList.Except(deserializedFractionList).ToList()));
             Console.ReadKey();
